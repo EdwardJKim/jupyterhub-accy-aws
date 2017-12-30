@@ -5,8 +5,8 @@ consul:
   net: host
   volumes:
     - /srv/consul:/consul/data
-    - /root/consul/config:/consul/config
-    - /root/.docker:/root/.docker
+    - /home/centos/consul/config:/consul/config
+    - /home/centos/.docker:/root/.docker
   command: >
     agent
     "-advertise={{ private_ip }}"
@@ -18,7 +18,7 @@ swarm:
   image: swarm:1.2.8
   restart: always
   volumes:
-    - /root/.docker:/root/.docker
+    - /home/centos/.docker:/root/.docker
   command: >
     join
     "--addr={{ private_ip }}:2375"

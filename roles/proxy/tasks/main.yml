@@ -69,19 +69,19 @@
   copy: src=EYlogo.ico dest=/srv/httpd/EYlogo.ico
 
 - name: install docker-compose.yml
-  template: src=docker-compose.yml dest=/root/docker-compose.yml
+  template: src=docker-compose.yml dest=/home/centos/docker-compose.yml
 
 - name: stop docker containers
-  command: docker-compose stop
+  command: /usr/local/bin/docker-compose stop
 
 - name: remove docker containers
-  command: docker-compose rm -f
+  command: /usr/local/bin/docker-compose rm -f
 
 - name: pull docker images
-  command: docker-compose pull
+  command: /usr/local/bin/docker-compose pull
 
 - name: build docker images
-  command: docker-compose build
+  command: /usr/local/bin/docker-compose build
 
 - name: start services
-  command: docker-compose up -d
+  command: /usr/local/bin/docker-compose up -d

@@ -4,35 +4,36 @@
 
 - include: jupyterhub.yml
 - include: stats.yml
+- include: cull.yml
 
 - name: install docker compose
-  template: src=docker-compose.yml dest=/root/docker-compose.yml
+  template: src=docker-compose.yml dest=/home/centos/docker-compose.yml
 
 - name: stop docker containers
-  command: docker-compose stop
+  command: /usr/local/bin/docker-compose stop
 
 - name: remove docker containers
-  command: docker-compose rm -f
+  command: /usr/local/bin/docker-compose rm -f
 
 - name: pull docker images
-  command: docker-compose pull
+  command: /usr/local/bin/docker-compose pull
 
 - name: build docker images
-  command: docker-compose build
+  command: /usr/local/bin/docker-compose build
 
 - name: run jupyterhub
-  command: docker-compose up -d jupyterhub
+  command: /usr/local/bin/docker-compose up -d jupyterhub
 
 - name: wait for jupyterhub to start
-  command: docker logs root_jupyterhub_1
+  command: docker logs centos_jupyterhub_1
   register: jpy_status
   until: jpy_status.stderr.find("JupyterHub is now running") != -1
   retries: 5
   delay: 5
 
 - name: get a jupyterhub api token
-  command: docker exec root_jupyterhub_1 jupyterhub token -f /srv/jupyterhub_config/jupyterhub_config.py {{ jupyterhub_admin_user }}
+  command: docker exec centos_jupyterhub_1 jupyterhub token -f /srv/jupyterhub_config/jupyterhub_config.py {{ jupyterhub_admin_user }}
   register: jpy_api_token
 
 - name: start remaining services
-  shell: JPY_API_TOKEN={{ jpy_api_token.stdout }} docker-compose up -d --no-recreate
+  shell: JPY_API_TOKEN={{ jpy_api_token.stdout }} JUPYTERHUB_API_TOKEN={{ jpy_api_token.stdout }} /usr/local/bin/docker-compose up -d --no-recreate

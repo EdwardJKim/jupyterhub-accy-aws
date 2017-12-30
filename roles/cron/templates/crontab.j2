@@ -1,16 +1,6 @@
 TZ=America/Chicago
 # git auto-pull
-*/1 * * * * root cd /export/shared/accy570/readonly && /usr/bin/git pull origin master 2>&1 | /usr/bin/ts "\%F \%T" >> /var/log/cron.log
-# release week 2 notebooks to students
-00 12 2 9 6 root /export/release_to_students.sh 3 2>&1 | /usr/bin/ts "\%F \%T" >> /var/log/cron.log
-# we have two modules. wait one minute just in case.
-01 12 2 9 6 root /export/release_to_students.sh 4 2>&1 | /usr/bin/ts "\%F \%T" >> /var/log/cron.log
-# week 1 assignments and projects
-05 18 4 9 * root /export/collect.sh 1 2>&1 | /usr/bin/ts "\%F \%T" >> /var/log/cron.log
-05 18 5 9 * root /export/collect.sh 2 2>&1 | /usr/bin/ts "\%F \%T" >> /var/log/cron.log
-# release week 2 notebooks to students
-00 12 9 9 6 root /export/release_to_students.sh 5 2>&1 | /usr/bin/ts "\%F \%T" >> /var/log/cron.log
-# we have two modules. wait one minute just in case.
-01 12 9 9 6 root /export/release_to_students.sh 6 2>&1 | /usr/bin/ts "\%F \%T" >> /var/log/cron.log
+*/1 * * * * root cd /mnt/volume/shared/accy570/readonly && /usr/bin/git pull origin master 2>&1 | /usr/bin/ts "\%F \%T" >> /var/log/cron.log
+*/1 * * * * root cd /mnt/volume/shared/accy571/readonly && /usr/bin/git pull origin master 2>&1 | /usr/bin/ts "\%F \%T" >> /var/log/cron.log
 # An empty line is required at the end of this file for a valid cron file.
 

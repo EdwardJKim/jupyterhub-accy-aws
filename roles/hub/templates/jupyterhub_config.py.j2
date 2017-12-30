@@ -41,13 +41,13 @@ c.DockerSpawner.tls_key = os.environ['DOCKER_TLS_KEY']
 
 c.DockerSpawner.remove_containers = True
 c.DockerSpawner.volumes = {
-    '/home/{username}': '/home/data_scientist',
-    '/home/{username}/accy570': '/home/data_scientist/accy570',
-    '/home/{username}/accy571': '/home/data_scientist/accy571'
+    '/mnt/volume/home/{username}': '/home/data_scientist',
+    '/mnt/volume/home/{username}/accy570': '/home/data_scientist/accy570',
+    '/mnt/volume/home/{username}/accy571': '/home/data_scientist/accy571'
 }
 c.DockerSpawner.read_only_volumes = {
-    '/shared/accy570/readonly': '/home/data_scientist/accy570/readonly',
-    '/shared/accy571/readonly': '/home/data_scientist/accy571/readonly'
+    '/mnt/volume/shared/accy570/readonly': '/home/data_scientist/accy570/readonly',
+    '/mnt/volume/shared/accy571/readonly': '/home/data_scientist/accy571/readonly'
 }
 c.SwarmSpawner.singleuser = "data_scientist"
 c.SwarmSpawner.hostname = "accountancy"

@@ -22,7 +22,7 @@ class SwarmSpawner(DockerSpawner):
 
     hostname = Unicode('jupyter', config=True)
 
-    root_dir = Unicode('/export', config=True)
+    root_dir = Unicode('/mnt/volume', config=True)
 
     course_id = Unicode('accy', config=True)
 

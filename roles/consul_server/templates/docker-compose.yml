@@ -5,8 +5,8 @@ consul:
   net: host
   volumes:
     - /srv/consul:/consul/data
-    - /root/consul/config:/consul/config
-    - /root/.docker:/root/.docker
+    - /home/centos/consul/config:/consul/config
+    - /home/centos/.docker:/root/.docker
   command: >
     agent
     -server

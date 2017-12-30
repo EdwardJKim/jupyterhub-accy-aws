@@ -2,20 +2,5 @@
 - name: install nfs pakcages
   yum: name=nfs-utils,libnfsidmap state=latest
 
-- name: unmount home
-  shell: umount /home || true
-
-- name: unmount exchange
-  shell: umount {{ exchange_directory }} || true
-
-- name: unmount exchange
-  shell: umount /shared || true
-
-- name: mount home
-  mount: name=/home src={{ hostvars['jupyterhub_host']['private_ip'] }}:/home fstype=nfs opts={{ nfsoptions }} state=mounted
-
-- name: mount exchange
-  mount: name={{ exchange_directory }} src={{ hostvars['jupyterhub_host']['private_ip'] }}:/exchange fstype=nfs opts={{ nfsoptions }} state=mounted
-
-- name: mount exchange
-  mount: name=/shared src={{ hostvars['jupyterhub_host']['private_ip'] }}:/shared fstype=nfs opts={{ nfsoptions }} state=mounted
+- name: mount EFS
+  mount: name=/mnt/volume src={{ aws_efs_dns }}:/ fstype=nfs4 opts=nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 state=mounted

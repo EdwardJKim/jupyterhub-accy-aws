@@ -2,32 +2,8 @@
 - name: install nfs pakcages
   yum: name=nfs-utils,libnfsidmap state=latest
 
-- name: stop nfs
-  service: name=nfs state=stopped
-
-- name: stop rpcbind
-  service: name=rpcbind state=stopped
-
-- name: unmount existing volumes
-  shell: umount /mnt/volume || true
-
-- name: create a ext4 filesystem on /dev/vdb
-  filesystem: fstype=ext4 dev=/dev/vdb
-
-- name: create mount directory
-  file: name=/mnt/volume state=directory
-
-- name: mount storage volume
-  mount: name=/mnt/volume src=/dev/vdb fstype=ext4 state=mounted
-
-- name: bind mount to export directory
-  mount: name=/export src=/mnt/volume fstype=none opts=bind state=mounted
-
-- name: install /etc/exports
-  template: src=exports dest=/etc/exports mode=0644
-
-- name: start rpcbind
-  service: name=rpcbind state=started
+- name: mount EFS
+  mount: name=/mnt/volume src={{ aws_efs_dns }}:/ fstype=nfs4 opts=nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 state=mounted
 
 - name: create /mnt/volume/home
   file: path=/mnt/volume/home state=directory
@@ -100,10 +76,10 @@
 #  with_items:
 #  - "{{ jupyterhub_admins|lower }}"
 #  - "{{ jupyterhub_users|lower }}"
-
-# There are no assignments in ACCY courses in Fall 2017 (only projects).
-# I'm commenting out (rather than deleting) the setup for exchange directories
-# so Assignments tab can be installed later if necessary.
+#
+## There are no assignments in ACCY courses in Fall 2017 (only projects).
+## I'm commenting out (rather than deleting) the setup for exchange directories
+## so Assignments tab can be installed later if necessary.
 #
 #- name: create exchange directories
 #  file: path=/mnt/volume/exchange/{{ item }}/accy state=directory group=100 owner=1000
@@ -122,9 +98,6 @@
 #  with_items:
 #  - "{{ jupyterhub_admins|lower }}"
 #  - "{{ jupyterhub_users|lower }}"
-
+#
 #- name: create shared directory
 #  file: path=/mnt/volume/shared state=directory group=root owner=root recurse=yes
-
-- name: start nfs-server
-  service: name=nfs state=started

@@ -18,10 +18,4 @@ RUN touch /var/log/cron.log
 
 ADD studentlist /tmp/studentlist
 
-ADD release_to_students.sh /tmp/release_to_students.sh
-RUN chmod +x /tmp/release_to_students.sh
-
-ADD collect.sh /tmp/collect.sh
-RUN chmod +x /tmp/collect.sh
-
 CMD touch /etc/crontab /etc/cron.*/* && cron && tail -f /var/log/cron.log

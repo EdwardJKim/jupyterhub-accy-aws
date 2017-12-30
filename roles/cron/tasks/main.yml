@@ -19,18 +19,8 @@
   tags:
   - cron
 
-- name: copy release_to_students.sh
-  copy: src=release_to_students.sh dest=/srv/cron/release_to_students.sh
-  tags:
-  - cron
-
-- name: copy collect.sh
-  copy: src=collect.sh dest=/srv/cron/collect.sh
-  tags:
-  - cron
-
 - name: stop and remove cron container
-  shell: docker ps -a | grep root_cron_1 > /dev/null && docker rm -f root_cron_1 || true
+  shell: docker ps -a | grep centos_cron_1 > /dev/null && docker rm -f centos_cron_1 || true
   tags:
   - cron
 
@@ -40,6 +30,6 @@
   - cron
 
 - name: run cron container
-  command: docker run -d --name root_cron_1 -v /export:/export cron
+  command: docker run -d --name centos_cron_1 -v /mnt/volume:/mnt/volume cron
   tags:
   - cron

@@ -12,7 +12,7 @@ swarm:
     --discovery-opt kv.keyfile=/root/.docker/key.pem
     "consul://{{ private_ip }}:8501/swarm"
   volumes:
-    - /root/.docker:/root/.docker
+    - /home/centos/.docker:/root/.docker
   ports:
     - "{{ docker_server_port }}:2375"
 
@@ -30,8 +30,8 @@ jupyterhub:
     - "{{ private_ip }}:8081:8081"
   volumes:
     - /srv/jupyterhub_users:/srv/jupyterhub_users
-    - /root/.docker:/root/.docker
-    - /export:/export
+    - /home/centos/.docker:/root/.docker
+    - /mnt/volume:/mnt/volume
   links:
     - swarm
 
@@ -46,3 +46,13 @@ stats:
     links:
       - jupyterhub
 
+cull:
+    build: /srv/cull
+    restart: always
+    command: --timeout=3600 --cull_every=1800 --url=http://jupyterhub:8081/hub/api
+    environment:
+      JUPYTERHUB_API_TOKEN:
+    volumes:
+      - /home/centos/.docker:/root/.docker
+    links:
+      - jupyterhub

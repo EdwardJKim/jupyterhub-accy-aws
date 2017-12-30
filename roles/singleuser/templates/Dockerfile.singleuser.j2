@@ -10,4 +10,9 @@ USER $NB_USER
 ENV TZ America/Chicago
 
 ENV PYTHONPATH /home/$NB_USER/.accy/rubric:$PYTHONPATH
-ENV NLTK_DATA /home/$NB_USER/data/nltk_data
+
+# NLTK was installed with something like
+# $ sudo docker run --rm -it -v /mnt/volume/shared/accy571/readonly/data:/mnt/data python:3 bash
+# # pip install nltk
+# # python -m nltk.downloader -d /mnt/data/nltk_data all
+ENV NLTK_DATA /home/$NB_USER/accy571/readonly/data/nltk_data

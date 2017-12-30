@@ -14,18 +14,25 @@
 - name: install docker engine
   yum: name=docker-engine-1.13.1 state=present
 
+- name: add docker group
+  group: name=docker state=present
+  register: user_task
+
+- name: add centos to docker group
+  user: name=centos groups=docker append=yes
+
 - name: create docker TLS directory
-  file: path=/root/.docker state=directory group=root owner=root mode=0700
+  file: path=/home/centos/.docker state=directory group=centos owner=centos mode=0700
 
 - name: install docker TLS certificates
-  template: src={{ item.from }} dest={{ item.to }} mode=0600
+  template: src={{ item.from }} dest={{ item.to }} group=centos owner=centos mode=0600
   with_items:
     - from: ca.pem.j2
-      to: /root/.docker/ca.pem
+      to: /home/centos/.docker/ca.pem
     - from: cert.pem.j2
-      to: /root/.docker/cert.pem
+      to: /home/centos/.docker/cert.pem
     - from: key.pem.j2
-      to: /root/.docker/key.pem
+      to: /home/centos/.docker/key.pem
 
 - name: docker-py
   pip: name=docker state=present version=2.3.0
@@ -37,7 +44,7 @@
   shell: docker rm -v $(docker ps -a -q) || true
 
 - name: run docker cleanup cronjob
-  cron: name="docker cleanup" minute=15 user="root" job="/usr/bin/docker rmi $(/usr/bin/docker images -q --filter 'dangling=true')"
+  cron: name="docker cleanup" minute=15 user="centos" job="/usr/bin/docker rmi $(/usr/bin/docker images -q --filter 'dangling=true')"
 
 - name: install docker-compose
   shell: curl -L https://github.com/docker/compose/releases/download/1.14.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
@@ -50,6 +57,9 @@
 
 - name: set DOCKER_TLS_VERIFY
   lineinfile: dest=/etc/environment state=present line="DOCKER_TLS_VERIFY=1"
+
+- name: set DOCKER_CERT_PATH
+  lineinfile: dest=/etc/environment state=present line="DOCKER_CERT_PATH=/home/centos/.docker"
 
 - name: create a systemd directory
   file: path=/lib/systemd/system/docker.service.d state=directory
