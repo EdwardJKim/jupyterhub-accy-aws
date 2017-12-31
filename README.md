@@ -46,69 +46,54 @@ running on the hub server.
 Any management system benefits from being run near the machines being managed.
 If you are running Ansible in a cloud, consider running it from a machine inside that cloud.
 In most cases this will work better than on the open Internet.
-
-### Clone Git repository
-
-```shell
-$ git clone https://github.com/edwardjkim/jupyterhub-accounting
-$ cd jupyterhub-accounting
-```
+We assume CentOS 7.x in the following.
 
 ### Install Docker
 
 ```shell
 $ sudo yum update
-$ sudo tee /etc/yum.repos.d/docker.repo <<-'EOF'
-[dockerrepo]
-name=Docker Repository
-baseurl=https://yum.dockerproject.org/repo/main/centos/$releasever/
-enabled=1
-gpgcheck=1
-gpgkey=https://yum.dockerproject.org/gpg
-EOF
-$ sudo yum install docker-engine
+$ sudo yum install docker
 $ sudo service docker start
-```
-
-### Install Python modules
-
-On CentOS 7.x,
-
-```shell
-$ sudo yum install python python-devel gcc openssl-devel
-$ sudo yum install epel-release
-$ sudo yum install python-pip
-$ sudo pip install paramiko PyYAML Jinja2 httplib2 six pycrypto
 ```
 
 ### Install Ansible
 
 ```shell
-$ git clone git://github.com/ansible/ansible.git --recursive
-$ cd ./ansible
-$ source ./hacking/env-setup
+$ sudo pip install ansible
 ```
 
-If you log out of a session, you have to do `source ./hacking/env-setup` again
-when you log back in, so you might want to add `cd ./ansible && source ./hacking/env-setup` to
-`.bashrc`.
+### Clone Git repository
+
+```shell
+$ git clone https://github.com/edwardjkim/jupyterhub-accy-aws
+$ cd jupyterhub-accy-aws
+```
+
 
 ### Configuration variables
 
 Use the example YAML files to change your server configurations.
-
 ```shell
 $ cp inventory.example inventory
+```
+If you want to use the previous configuration, decrypt with `ansible-vault`:
+```shell
+$ ansible-vault decrypt inventory
+```
+Edit inventory
+```shell
 $ vim inventory
 ```
 
+Similarly, use the example YAML files or decrypt the previous configarution
+for `users.yml` and `vars.yml`:
 ```shell
-$ cp users.yml.example users.yml
+$ ansible-vault decrypt users.yml
 $ vim users.yml
 ```
 
 ```shell
-$ cp vars.yml.example vars.yml
+$ ansible-vault decrypt vars.yml
 $ vim vars.yml
 ```
 
@@ -208,53 +193,13 @@ $ ansible-vault encrypt host_vars/proxy_server
 $ ansible-vault encrypt host_vars/jupyterhub_host
 $ ansible-vault encrypt host_vars/jupyterhub_node1
 $ ansible-vault encrypt host_vars/jupyterhub_node2
+$ ansible-vault encrypt host_vars/jupyterhub_node3
+$ ansible-vault encrypt host_vars/jupyterhub_node4
 ```
-
-## Set up Duplicity for backup
-
-Generate a key pair in the `nfs_server` machine:
-
-```shell
-$ ssh-keygen -t rsa
-```
-
-Press Enter at the prompts to create a password-less SSH key with the default settings.
-
-Transfer it to the system that will host your backups:
-
-```shell
-$ ssh-copy-id root@backupHost
-```
-
-Test that you can now log in without a password from your `nfs_server` by issuing:
-
-```shell
-$ ssh -oHostKeyAlgorithms='ssh-rsa' root@backupHost
-```
-
-We can use GPG for extra security and encryption. The commands will store our keys in a hidden directory at /root/.gnupg/:
-
-```shell
-$ gpg --gen-key
-```
-
-Use the key to define the `gpg_key` and `gpg_pass` variables in `vars.yml`.
 
 ## Deploy
-
-If you specified `ansible_host=root` in `inventory`, you need to be able to log into the VM as root.
-If you see the following message,
-
-```shell
-ubuntu@deploy:~/jupyterhub-accounting$ ssh root@<VM IP address>
-Please login as the user "centos" rather than the user "root".
-```
-
-edit the `/root/.ssh/authorized_keys` file in the node VM and remove everything that comes before `ssh-keys`.
-
 
 ```shell
 $ ./script/deploy
 ```
-
 This shell script will ask for SSH passwords and ansible-vault password.
